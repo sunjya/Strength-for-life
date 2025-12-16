@@ -248,7 +248,7 @@ Research shows that the ability to stand on one leg for 10+ seconds is associate
   dips: {
     title: 'Tricep Dips',
     subtitle: 'Upper Body Pushing Power',
-    icon: '🔱',
+    icon: '🔻',
     overview: `**Dips build the triceps and pushing strength essential for maintaining upper body function and independence.**
 
 The triceps make up about two-thirds of your upper arm mass and are crucial for any pushing movement. Strong triceps help you push yourself up from a chair, get out of a bathtub, or catch yourself during a fall.
