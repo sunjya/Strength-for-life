@@ -36,20 +36,31 @@ export async function POST(request) {
             {
               type: "text",
               text: `Extract DEXA scan body composition data from this ${isPdf ? 'document' : 'image/screenshot'}. I need:
-1. Appendicular lean mass (arms + legs) - look for "ALM", "Appendicular", "Lean Mass" by region, or sum of left/right arm and leg lean tissue
-2. Height (in cm or inches)
-3. Total body fat percentage (look for "Total" or "Whole Body" fat %)
-4. Date of scan (MM/DD/YYYY format if possible)
+1. Arm lean mass - look for "Arms", "Arm Lean", or sum of left + right arm lean tissue (in kg)
+2. Leg lean mass - look for "Legs", "Leg Lean", or sum of left + right leg lean tissue (in kg)
+3. Height (in cm or inches)
+4. Age if available
+5. Gender/Sex if available
+6. Total body fat percentage (look for "Total" or "Whole Body" fat %)
+7. Date of scan (MM/DD/YYYY format if possible)
 
 Return ONLY valid JSON in this exact format with no other text:
 {
-  "appendicularLeanMassKg": number,
+  "armLeanMassKg": number,
+  "legLeanMassKg": number,
   "heightCm": number,
-  "bodyFatPercentage": number,
+  "age": number,
+  "gender": "male" or "female",
+  "totalBodyFatPercent": number,
   "date": "MM/DD/YYYY"
 }
 
-If you cannot find a value, use null. Be precise with numbers - include decimals if shown.`
+Important:
+- Convert any values in grams to kg (divide by 1000)
+- Convert any values in lbs to kg (divide by 2.205)
+- Sum left and right limbs for total arm/leg values
+- If you cannot find a value, use null
+- Be precise with numbers - include decimals if shown.`
             }
           ]
         }]
