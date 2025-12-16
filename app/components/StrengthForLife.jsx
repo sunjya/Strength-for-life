@@ -274,7 +274,7 @@ The ability to push yourself up from a chair without using momentum is a key ind
   crunches: {
     title: 'Crunches',
     subtitle: 'Core Stability & Spinal Health',
-    icon: '🎯',
+    icon: '🌀',
     overview: `**A strong core is the foundation of all movement and essential for preventing back pain and maintaining posture.**
 
 Your core isn't just about abs—it's the entire cylinder of muscles that stabilize your spine and transfer force between your upper and lower body.
