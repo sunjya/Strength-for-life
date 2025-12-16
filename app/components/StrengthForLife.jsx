@@ -1629,7 +1629,49 @@ Guidelines:
         {/* ==================== TODAY VIEW ==================== */}
         {currentView === 'today' && (
           <div className="space-y-4 animate-slideUp">
-            
+
+            {/* Exercise Icons Bar */}
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
+              {Object.entries(EXERCISES).map(([key, ex]) => {
+                const done = todayData[key] || 0;
+                const goal = goals[key];
+                const pct = Math.min(100, (done / goal) * 100);
+                const isComplete = done >= goal;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => {
+                      setSelectedExercise(key);
+                      setExpandedCard('strength');
+                    }}
+                    className="flex-shrink-0 relative group"
+                  >
+                    <div className={`w-16 h-16 rounded-xl flex flex-col items-center justify-center transition ${
+                      isComplete ? 'bg-gradient-to-br from-teal-500/30 to-cyan-500/30 glow-teal' : 'bg-white/5 hover:bg-white/10'
+                    }`}>
+                      <div className="text-2xl mb-1">{LEARNING_CONTENT[key].icon}</div>
+                      <div className="absolute bottom-1 text-[10px] font-medium" style={{ color: ex.color }}>
+                        {done}/{goal}
+                      </div>
+                      {isComplete && (
+                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-teal-500 rounded-full flex items-center justify-center text-white text-xs">
+                          ✓
+                        </div>
+                      )}
+                    </div>
+                    {pct > 0 && (
+                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 rounded-b-xl overflow-hidden">
+                        <div
+                          className="h-full transition-all duration-500"
+                          style={{ width: `${pct}%`, backgroundColor: ex.color }}
+                        />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
             {/* Strength Score Card - Expandable */}
             <div className="card-gradient rounded-2xl overflow-hidden glow-teal">
               <button 
