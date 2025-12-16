@@ -2360,7 +2360,7 @@ Guidelines:
               </p>
             </div>
 
-            <div className="space-y-3">
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-5 px-5">
               {Object.entries(LEARNING_CONTENT).map(([key, content]) => {
                 const ex = EXERCISES[key];
                 return (
@@ -2370,19 +2370,16 @@ Guidelines:
                       setLearningExercise(key);
                       setLearningMessages([{ role: 'assistant', content: content.overview }]);
                     }}
-                    className="w-full card-gradient rounded-2xl p-4 text-left hover:ring-1 hover:ring-white/20 transition"
+                    className="flex-shrink-0 w-64 card-gradient rounded-2xl p-5 text-left hover:ring-1 hover:ring-white/20 transition"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl" style={{ backgroundColor: `${ex.color}20` }}>
+                    <div className="flex flex-col items-center text-center gap-3">
+                      <div className="w-16 h-16 rounded-xl flex items-center justify-center text-3xl" style={{ backgroundColor: `${ex.color}20` }}>
                         {content.icon}
                       </div>
-                      <div className="flex-1">
-                        <h4 className="font-medium text-white">{content.title}</h4>
-                        <p className="text-sm text-white/50">{content.subtitle}</p>
-                        <p className="text-xs mt-1" style={{ color: ex.color }}>{ex.muscle}</p>
-                      </div>
-                      <div className="w-5 h-5 text-white/30">
-                        <Icons.chevron />
+                      <div>
+                        <h4 className="font-medium text-white mb-1">{content.title}</h4>
+                        <p className="text-sm text-white/50 mb-2">{content.subtitle}</p>
+                        <p className="text-xs" style={{ color: ex.color }}>{ex.muscle}</p>
                       </div>
                     </div>
                   </button>
