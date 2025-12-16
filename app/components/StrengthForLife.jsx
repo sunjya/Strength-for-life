@@ -1721,8 +1721,8 @@ Guidelines:
                           }}
                           className={`w-full flex items-center gap-3 p-2 -mx-2 rounded-lg transition ${isSelected ? 'bg-white/5' : 'hover:bg-white/5'}`}
                         >
-                          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${ex.color}20` }}>
-                            <div className="w-4 h-4" style={{ color: ex.color }}><Icons.dumbbell /></div>
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-lg" style={{ backgroundColor: `${ex.color}20` }}>
+                            {LEARNING_CONTENT[key].icon}
                           </div>
                           <div className="flex-1 text-left">
                             <div className="flex justify-between text-sm mb-1">
@@ -1876,8 +1876,8 @@ Guidelines:
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${ex.color}20` }}>
-                          <div className="w-6 h-6" style={{ color: ex.color }}><Icons.dumbbell /></div>
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style={{ backgroundColor: `${ex.color}20` }}>
+                          {LEARNING_CONTENT[key].icon}
                         </div>
                         <div>
                           <h3 className="font-medium flex items-center gap-2">
