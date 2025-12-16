@@ -414,57 +414,92 @@ const parseVoiceCommand = (text, workoutData, goals) => {
   const lower = text.toLowerCase();
   const today = getTodayKey();
   const todayData = workoutData[today] || {};
-  
+
   // Exercise patterns to match
   const exercisePatterns = [
-    { patterns: ['push-up', 'pushup', 'push up', 'pushups'], key: 'pushups' },
-    { patterns: ['squat', 'squats'], key: 'squats' },
-    { patterns: ['lunge', 'lunges'], key: 'lunges' },
-    { patterns: ['dip', 'dips', 'tricep dip'], key: 'dips' },
-    { patterns: ['crunch', 'crunches', 'ab', 'abs', 'core'], key: 'crunches' }
+    { patterns: ['push-up', 'pushup', 'push up', 'pushups', 'push-ups'], key: 'pushups', name: 'Push-ups' },
+    { patterns: ['squat', 'squats'], key: 'squats', name: 'Squats' },
+    { patterns: ['lunge', 'lunges'], key: 'lunges', name: 'Lunges' },
+    { patterns: ['dip', 'dips', 'tricep dip', 'tricep dips'], key: 'dips', name: 'Dips' },
+    { patterns: ['crunch', 'crunches', 'ab', 'abs', 'core'], key: 'crunches', name: 'Crunches' }
   ];
-  
-  // Extract numbers from text
-  const numberMatch = lower.match(/(\d+)/);
-  const count = numberMatch ? parseInt(numberMatch[1]) : null;
-  
-  // Find which exercise was mentioned
-  let exerciseKey = null;
-  for (const ex of exercisePatterns) {
-    if (ex.patterns.some(p => lower.includes(p))) {
-      exerciseKey = ex.key;
-      break;
-    }
-  }
-  
+
   // Logging commands: "I did 20 push-ups", "log 15 squats", "20 pushups", etc.
   const loggingPhrases = ['did', 'log', 'done', 'finished', 'completed', 'just did', 'add'];
-  const isLoggingCommand = loggingPhrases.some(p => lower.includes(p)) || (count && exerciseKey);
-  
-  if (exerciseKey && count && isLoggingCommand) {
-    const currentTotal = (todayData[exerciseKey] || 0) + count;
-    const goalForExercise = goals[exerciseKey];
-    const percentComplete = Math.round((currentTotal / goalForExercise) * 100);
-    
-    let encouragement = '';
-    if (count >= 50) encouragement = "Incredible set! 🔥";
-    else if (count >= 25) encouragement = "Excellent work! 💪";
-    else if (count >= 10) encouragement = "Nice set!";
-    else encouragement = "Good job!";
-    
-    let goalStatus = '';
-    if (currentTotal >= goalForExercise) {
-      goalStatus = ` You've hit your daily goal! 🎯`;
-    } else {
-      goalStatus = ` ${goalForExercise - currentTotal} more to reach your goal.`;
+  const isLoggingCommand = loggingPhrases.some(p => lower.includes(p));
+
+  if (isLoggingCommand) {
+    // Try to find all number + exercise combinations
+    const exercises = [];
+
+    // Split by common separators
+    const segments = lower.split(/\band\b|\,|then|also|plus/);
+
+    for (const segment of segments) {
+      // Extract number from this segment
+      const numberMatch = segment.match(/(\d+)/);
+      const count = numberMatch ? parseInt(numberMatch[1]) : null;
+
+      // Find which exercise was mentioned in this segment
+      let exerciseKey = null;
+      let exerciseName = null;
+      for (const ex of exercisePatterns) {
+        if (ex.patterns.some(p => segment.includes(p))) {
+          exerciseKey = ex.key;
+          exerciseName = ex.name;
+          break;
+        }
+      }
+
+      if (count && exerciseKey) {
+        exercises.push({ key: exerciseKey, count: count, name: exerciseName });
+      }
     }
-    
-    return {
-      action: 'log',
-      exercise: exerciseKey,
-      count: count,
-      response: `✓ Logged ${count} ${EXERCISES[exerciseKey].name}! ${encouragement} That's ${currentTotal} today (${percentComplete}%).${goalStatus}`
-    };
+
+    // If we found multiple exercises, log them all
+    if (exercises.length > 1) {
+      const responses = [];
+      for (const ex of exercises) {
+        const currentTotal = (todayData[ex.key] || 0) + ex.count;
+        const goalForExercise = goals[ex.key];
+        const percentComplete = Math.round((currentTotal / goalForExercise) * 100);
+        responses.push(`${ex.count} ${ex.name} (${percentComplete}%)`);
+      }
+
+      return {
+        action: 'log_multiple',
+        exercises: exercises,
+        response: `✓ Logged: ${responses.join(', ')}. Great work! 💪`
+      };
+    }
+
+    // Single exercise
+    if (exercises.length === 1) {
+      const ex = exercises[0];
+      const currentTotal = (todayData[ex.key] || 0) + ex.count;
+      const goalForExercise = goals[ex.key];
+      const percentComplete = Math.round((currentTotal / goalForExercise) * 100);
+
+      let encouragement = '';
+      if (ex.count >= 50) encouragement = "Incredible set! 🔥";
+      else if (ex.count >= 25) encouragement = "Excellent work! 💪";
+      else if (ex.count >= 10) encouragement = "Nice set!";
+      else encouragement = "Good job!";
+
+      let goalStatus = '';
+      if (currentTotal >= goalForExercise) {
+        goalStatus = ` You've hit your daily goal! 🎯`;
+      } else {
+        goalStatus = ` ${goalForExercise - currentTotal} more to reach your goal.`;
+      }
+
+      return {
+        action: 'log',
+        exercise: ex.key,
+        count: ex.count,
+        response: `✓ Logged ${ex.count} ${ex.name}! ${encouragement} That's ${currentTotal} today (${percentComplete}%).${goalStatus}`
+      };
+    }
   }
   
   // Progress queries
@@ -644,25 +679,41 @@ export default function StrengthForLife() {
           setInterimTranscript('');
           // Use refs to get current state values (avoids stale closure)
           setChatMessages(prev => [...prev, { role: 'user', content: final }]);
-          
+
           const result = parseVoiceCommand(final, workoutDataRef.current, goalsRef.current);
-          
+
+          // Handle single exercise logging
           if (result.action === 'log' && result.exercise && result.count) {
-            // Log the reps
             const today = getTodayKey();
-            setWorkoutData(prev => ({ 
-              ...prev, 
-              [today]: { 
-                ...prev[today], 
-                [result.exercise]: (prev[today]?.[result.exercise] || 0) + result.count 
-              } 
+            setWorkoutData(prev => ({
+              ...prev,
+              [today]: {
+                ...prev[today],
+                [result.exercise]: (prev[today]?.[result.exercise] || 0) + result.count
+              }
             }));
           }
-          
+
+          // Handle multiple exercises logging
+          if (result.action === 'log_multiple' && result.exercises) {
+            const today = getTodayKey();
+            setWorkoutData(prev => {
+              const newData = { ...prev };
+              const todayData = { ...(newData[today] || {}) };
+
+              for (const ex of result.exercises) {
+                todayData[ex.key] = (todayData[ex.key] || 0) + ex.count;
+              }
+
+              newData[today] = todayData;
+              return newData;
+            });
+          }
+
           setTimeout(() => {
             setChatMessages(prev => [...prev, { role: 'assistant', content: result.response }]);
           }, 300);
-          
+
           setIsListening(false);
         }
       };
@@ -1029,14 +1080,20 @@ export default function StrengthForLife() {
   // handleVoiceInput now uses refs to avoid stale closures
   const handleVoiceInput = (transcript) => {
     setChatMessages(p => [...p, { role: 'user', content: transcript }]);
-    
+
     // Use refs to get current state values
     const result = parseVoiceCommand(transcript, workoutDataRef.current, goalsRef.current);
-    
+
     if (result.action === 'log' && result.exercise && result.count) {
       logReps(result.exercise, result.count);
     }
-    
+
+    if (result.action === 'log_multiple' && result.exercises) {
+      for (const ex of result.exercises) {
+        logReps(ex.key, ex.count);
+      }
+    }
+
     setChatInput('');
     setTimeout(() => {
       setChatMessages(p => [...p, { role: 'assistant', content: result.response }]);
@@ -1107,14 +1164,20 @@ Guidelines:
   const handleChat = () => {
     if (!chatInput.trim()) return;
     setChatMessages(p => [...p, { role: 'user', content: chatInput }]);
-    
+
     // Use refs to get current state values
     const result = parseVoiceCommand(chatInput, workoutDataRef.current, goalsRef.current);
-    
+
     if (result.action === 'log' && result.exercise && result.count) {
       logReps(result.exercise, result.count);
     }
-    
+
+    if (result.action === 'log_multiple' && result.exercises) {
+      for (const ex of result.exercises) {
+        logReps(ex.key, ex.count);
+      }
+    }
+
     setChatInput('');
     setTimeout(() => {
       setChatMessages(p => [...p, { role: 'assistant', content: result.response }]);
