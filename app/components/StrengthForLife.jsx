@@ -1782,6 +1782,88 @@ Guidelines:
       {/* Main Content */}
       <main className="px-5 pb-28 space-y-4">
 
+        {/* ==================== START HERE VIEW ==================== */}
+        {currentView === 'start' && (
+          <div className="space-y-6 animate-slideUp max-w-2xl mx-auto">
+
+            {/* Hero Section */}
+            <div className="text-center pt-6 pb-4">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-teal-500/20 to-cyan-500/20 flex items-center justify-center">
+                <div className="text-4xl">💪</div>
+              </div>
+              <h1 className="text-3xl font-bold mb-3">
+                <span className="text-teal-400">Strength</span>
+                <span className="text-white/70"> for </span>
+                <span className="text-cyan-400">Life</span>
+              </h1>
+              <p className="text-white/60 text-lg">Your path to a longer, stronger, healthier life</p>
+            </div>
+
+            {/* Main Content Card */}
+            <div className="card-dark rounded-2xl p-6 space-y-6">
+
+              {/* Introduction */}
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold text-white">Why Strength Training Matters</h2>
+                <p className="text-white/80 leading-relaxed">
+                  Strength training is one of the most powerful interventions for healthspan and longevity. Research shows that maintaining muscle mass and strength as we age is directly linked to reduced risk of chronic disease, better metabolic health, enhanced cognitive function, and increased independence in later years.
+                </p>
+                <p className="text-white/80 leading-relaxed">
+                  The ability to perform 40+ push-ups correlates with a 96% reduced risk of cardiovascular disease. Strong leg muscles predict better mobility and fall prevention. Core strength protects your spine and supports every movement you make.
+                </p>
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-white/10"></div>
+
+              {/* Platform Purpose */}
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold text-white">Your 5 Essential Exercises</h2>
+                <p className="text-white/80 leading-relaxed">
+                  This platform helps you master and track the 5 key bodyweight exercises that build comprehensive functional strength. No gym required—just your body and consistency.
+                </p>
+              </div>
+
+              {/* Exercise List */}
+              <div className="space-y-3">
+                {Object.entries(EXERCISES).map(([key, ex]) => (
+                  <div key={key} className="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition">
+                    <div className="text-2xl flex-shrink-0">{LEARNING_CONTENT[key].icon}</div>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-white mb-1" style={{ color: ex.color }}>
+                        {ex.name}
+                      </h3>
+                      <p className="text-sm text-white/60">{ex.muscle}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-white/10"></div>
+
+              {/* Closing Message */}
+              <div className="space-y-4">
+                <p className="text-white/80 leading-relaxed text-center">
+                  Master these five movements, and you'll build a foundation of strength that supports your longest, strongest, and healthiest life.
+                </p>
+                <p className="text-teal-400 text-center font-medium">
+                  Let's get started. 🚀
+                </p>
+              </div>
+
+              {/* CTA Button */}
+              <button
+                onClick={() => setCurrentView('today')}
+                className="w-full py-4 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl font-semibold text-white hover:from-teal-600 hover:to-cyan-600 transition shadow-lg"
+              >
+                Start Your Journey
+              </button>
+            </div>
+
+          </div>
+        )}
+
         {/* ==================== TODAY VIEW ==================== */}
         {currentView === 'today' && (
           <div className="space-y-4 animate-slideUp">
@@ -2830,6 +2912,7 @@ Guidelines:
           border: '1px solid rgba(255,255,255,0.1)' 
         }}>
           {[
+            { id: 'start', icon: Icons.flame, label: 'Start Here' },
             { id: 'today', icon: Icons.activity, label: 'Today' },
             { id: 'vitals', icon: Icons.body, label: 'DEXA' },
             { id: 'learning', icon: Icons.brain, label: 'Learn' },
