@@ -1,5 +1,17 @@
+'use client'
+
 import React, { useState, useEffect, useRef } from 'react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import dynamic from 'next/dynamic';
+
+// Dynamically import recharts to avoid SSR issues
+const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), { ssr: false });
+const Line = dynamic(() => import('recharts').then(mod => mod.Line), { ssr: false });
+const XAxis = dynamic(() => import('recharts').then(mod => mod.XAxis), { ssr: false });
+const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: false });
+const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr: false });
+const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { ssr: false });
+const AreaChart = dynamic(() => import('recharts').then(mod => mod.AreaChart), { ssr: false });
+const Area = dynamic(() => import('recharts').then(mod => mod.Area), { ssr: false });
 
 // ============================================================================
 // ICONS - Oura-style minimal outlined icons
@@ -526,6 +538,7 @@ export default function StrengthForLife() {
   // Auth state
   const [user, setUser] = useState(null);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [authPromptDismissed, setAuthPromptDismissed] = useState(false); // Track if user dismissed this session
   const [authMode, setAuthMode] = useState('register');
   const [authForm, setAuthForm] = useState({ email: '', password: '', name: '' });
   const [authError, setAuthError] = useState('');
@@ -787,7 +800,10 @@ export default function StrengthForLife() {
     if (!user) {
       const n = guestRepsLogged + reps;
       setGuestRepsLogged(n);
-      if (n >= 50 && !showAuthPrompt) setTimeout(() => setShowAuthPrompt(true), 1000);
+      // Only show auth prompt once per session, and only if not already dismissed
+      if (n >= 50 && !showAuthPrompt && !authPromptDismissed) {
+        setTimeout(() => setShowAuthPrompt(true), 1000);
+      }
     }
     setTimeout(checkAchievements, 100);
   };
@@ -1194,69 +1210,6 @@ Guidelines:
       background: 'linear-gradient(180deg, #0d1117 0%, #161b22 50%, #0d1117 100%)', 
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" 
     }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        .card-gradient { 
-          background: linear-gradient(145deg, rgba(30, 60, 60, 0.4) 0%, rgba(20, 40, 45, 0.6) 100%); 
-          border: 1px solid rgba(255,255,255,0.05); 
-        }
-        .card-dark { 
-          background: rgba(22, 27, 34, 0.8); 
-          border: 1px solid rgba(255,255,255,0.05); 
-        }
-        .cosmic-bg { 
-          background: radial-gradient(ellipse at top, rgba(20, 60, 60, 0.3) 0%, transparent 50%), 
-                      radial-gradient(ellipse at bottom, rgba(40, 30, 50, 0.2) 0%, transparent 50%); 
-        }
-        .stars { 
-          background-image: radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.2), transparent), 
-                           radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.15), transparent), 
-                           radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.2), transparent); 
-          background-repeat: repeat; 
-          background-size: 250px 150px; 
-        }
-        .glow-teal { box-shadow: 0 0 40px rgba(20, 184, 166, 0.15); }
-        
-        @keyframes slideUp { 
-          from { transform: translateY(16px); opacity: 0; } 
-          to { transform: translateY(0); opacity: 1; } 
-        }
-        @keyframes celebrate { 
-          0% { transform: scale(0); } 
-          50% { transform: scale(1.1); } 
-          100% { transform: scale(1); } 
-        }
-        @keyframes pulse { 
-          0%, 100% { opacity: 1; } 
-          50% { opacity: 0.5; } 
-        }
-        @keyframes listening { 
-          0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 
-          50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 
-        }
-        
-        .animate-slideUp { animation: slideUp 0.4s ease-out; }
-        .animate-celebrate { animation: celebrate 0.5s ease-out; }
-        .animate-pulse { animation: pulse 1.5s ease-in-out infinite; }
-        .animate-listening { animation: listening 1.5s ease-in-out infinite; }
-        
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .number-large { font-weight: 300; font-size: 3rem; line-height: 1; letter-spacing: -0.02em; }
-        .number-xl { font-weight: 300; font-size: 4rem; line-height: 1; letter-spacing: -0.02em; }
-        
-        /* Toggle switch styles */
-        .toggle-btn { 
-          transition: all 0.2s ease; 
-        }
-        .toggle-btn.active { 
-          background: rgba(20, 184, 166, 0.2); 
-          color: #14b8a6; 
-        }
-      `}</style>
-
       {/* Achievement Popup */}
       {showAchievement && (
         <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
@@ -1276,6 +1229,7 @@ Guidelines:
               onClick={() => {
                 setShowAuthPrompt(false);
                 setAuthError('');
+                setAuthPromptDismissed(true); // Don't show again this session
               }} 
               className="absolute top-4 right-4 w-8 h-8 text-white/50 hover:text-white"
             >
@@ -1299,7 +1253,17 @@ Guidelines:
               <input type="password" placeholder="Password" value={authForm.password} onChange={(e) => setAuthForm(p => ({ ...p, password: e.target.value }))} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-teal-500/50" />
               <button type="submit" className="w-full py-3 bg-teal-500 rounded-xl font-medium hover:bg-teal-600 transition">{authMode === 'register' ? 'Create Account' : 'Sign In'}</button>
             </form>
-            <button onClick={() => { setShowAuthPrompt(false); setAuthError(''); }} className="w-full mt-3 py-2 text-white/40 text-sm hover:text-white/60 transition">Continue without saving</button>
+            <button 
+              onClick={() => { 
+                setShowAuthPrompt(false); 
+                setAuthError(''); 
+                setAuthPromptDismissed(true); // Don't show again this session
+              }} 
+              className="w-full mt-4 py-3 bg-white/10 rounded-xl text-white/80 text-sm font-medium hover:bg-white/20 transition"
+            >
+              Skip for now
+            </button>
+            <p className="text-center text-white/40 text-xs mt-2">You can sign in later from Settings</p>
           </div>
         </div>
       )}
