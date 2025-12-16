@@ -299,6 +299,87 @@ Research shows that core strength is associated with reduced back pain, better b
   }
 };
 
+// ============================================================================
+// ENCOURAGEMENT PHRASES - Context-aware motivational messages
+// ============================================================================
+const ENCOURAGEMENT_PHRASES = {
+  pushups: {
+    progress: [
+      { text: "your push-up streak is building more than muscle—it's boosting your mitochondria and cellular energy output. every rep is fueling stronger, younger muscle cells.", benefit: "mitochondrial function, cellular energy" },
+      { text: "consistent push-ups strengthen the chest, shoulders, and arms, but they also enhance heart efficiency. keep going—your cardiovascular system thanks you.", benefit: "cardiac fitness, endurance" },
+      { text: "your push-up control and form show real strength adaptation. this translates into better metabolic health and improved insulin sensitivity over time.", benefit: "insulin sensitivity, metabolic health" }
+    ],
+    struggle: [
+      { text: "push-ups challenge large muscle groups—if today feels tough, it's your body adapting. small struggles mean strength is building beneath the surface.", benefit: "adaptive stress response" },
+      { text: "missing reps isn't failure—it's feedback. your triceps and chest are still recovering and rebuilding stronger. rest and consistency matter more than numbers.", benefit: "recovery-driven adaptation" }
+    ],
+    milestone: [
+      { text: "100 push-ups achieved—your endurance and mitochondrial density have just reached new heights. this is functional longevity in motion.", benefit: "endurance, mitochondrial health" },
+      { text: "this milestone represents not just strength, but consistency. you've built a foundation that reduces inflammation and extends healthspan.", benefit: "inflammation reduction, longevity" }
+    ]
+  },
+  squats: {
+    progress: [
+      { text: "your consistent squats are strengthening the largest muscles in your body—quads and glutes—improving power, balance, and long-term mobility.", benefit: "muscle strength, functional independence" },
+      { text: "your steady progress is protecting you from sarcopenia and maintaining youthful muscle quality at the cellular level.", benefit: "sarcopenia prevention, cellular rejuvenation" },
+      { text: "every controlled squat increases mitochondrial efficiency, giving you more energy for movement and metabolism throughout the day.", benefit: "mitochondrial function, metabolic vitality" }
+    ],
+    struggle: [
+      { text: "if squats feel heavy today, that's your body adapting. fatigue means your muscles are rebuilding stronger for tomorrow.", benefit: "adaptive remodeling" },
+      { text: "soreness is part of progress—your quads and glutes are laying down stronger fibers for long-term power.", benefit: "hypertrophy, adaptation" }
+    ],
+    milestone: [
+      { text: "100 squats complete—you've just trained nearly 200 muscles and activated every major joint for functional longevity.", benefit: "full-body activation, mobility longevity" },
+      { text: "reaching 100 squats boosts lower-body muscle mass, metabolism, and bone health in one integrated movement.", benefit: "metabolic and skeletal support" }
+    ]
+  },
+  lunges: {
+    progress: [
+      { text: "your lunge consistency is improving single-leg stability and balance, one of the best predictors of longevity and fall prevention.", benefit: "balance, neuromuscular control" },
+      { text: "every lunge strengthens glutes, quads, and hamstrings symmetrically, fixing imbalances that protect hips and knees.", benefit: "muscle balance, joint stability" },
+      { text: "consistent lunges increase hip mobility and flexibility—your stride is literally aging in reverse.", benefit: "mobility, functional movement" }
+    ],
+    struggle: [
+      { text: "lunges can feel unstable at first—every wobble is your nervous system learning balance.", benefit: "motor control learning" },
+      { text: "soreness in the hips or thighs is your body strengthening weak links—stay patient, adaptation is happening.", benefit: "adaptation, strength gain" }
+    ],
+    milestone: [
+      { text: "100 lunges complete—your single-leg power and balance have reached an elite level of stability and coordination.", benefit: "neuromuscular efficiency, balance" },
+      { text: "this milestone improves gait mechanics and builds fall resistance—one of the best longevity outcomes possible.", benefit: "fall prevention, independence" }
+    ]
+  },
+  dips: {
+    progress: [
+      { text: "consistent dips are carving powerful triceps while enhancing upper-body push strength for daily tasks.", benefit: "triceps strength, functional push power" },
+      { text: "you're training your shoulders and chest safely through full motion—each session improves joint stability.", benefit: "shoulder health, joint integrity" },
+      { text: "dips increase NAD⁺ and mitochondrial content in muscle, rejuvenating cellular energy in your upper body.", benefit: "NAD⁺ elevation, cellular vitality" }
+    ],
+    struggle: [
+      { text: "dips are tough—they recruit multiple joints. every tremor means progress, not weakness.", benefit: "neuromuscular activation" },
+      { text: "soreness at the start signals new muscle fibers awakening. give them time to adapt.", benefit: "muscle fiber growth" }
+    ],
+    milestone: [
+      { text: "100 dips completed—you've strengthened one of the most vital upper-body muscle groups for longevity.", benefit: "triceps endurance, joint health" },
+      { text: "this achievement enhances posture, metabolic health, and shoulder protection all at once.", benefit: "posture stability, metabolic gain" }
+    ]
+  },
+  crunches: {
+    progress: [
+      { text: "your consistency is strengthening core muscles that support your spine and protect posture.", benefit: "core strength, spinal stability" },
+      { text: "every crunch activates deep abdominals and improves balance and movement control.", benefit: "stability, coordination" },
+      { text: "stronger abs enhance breathing mechanics and digestion through improved diaphragm control.", benefit: "respiratory function, gut mobility" }
+    ],
+    struggle: [
+      { text: "if your abs fatigue quickly, that's progress—those deep stabilizers are finally activating.", benefit: "neuromuscular activation" },
+      { text: "soreness means your core is adapting and strengthening—pain today, protection tomorrow.", benefit: "adaptation" }
+    ],
+    milestone: [
+      { text: "100 crunches completed—you've built a resilient core that supports every movement you make.", benefit: "core endurance, spinal support" },
+      { text: "this milestone improves posture, balance, and digestion all at once.", benefit: "posture, organ function" }
+    ]
+  }
+};
+
 const ACHIEVEMENTS = [
   { id: 'first_rep', name: 'First Step', description: 'Log your first rep', icon: '🌱', check: (s) => s.totalReps > 0 },
   { id: 'century', name: 'Century Club', description: '100 reps in one day', icon: '💯', check: (s) => s.dailyTotal >= 100 },
@@ -606,6 +687,7 @@ export default function StrengthForLife() {
   const [goals, setGoals] = useState({ pushups: 100, squats: 100, lunges: 100, dips: 100, crunches: 100 });
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);
   const [showAchievement, setShowAchievement] = useState(null);
+  const [encouragementToast, setEncouragementToast] = useState(null);
   
   // Expanded card states
   const [expandedCard, setExpandedCard] = useState(null);
@@ -853,6 +935,33 @@ export default function StrengthForLife() {
     return { totalReps, dailyTotal, exercisesToday, goalsMetToday, streak, goalPct, dexaScans: dexaScans.length };
   };
 
+  // Encouragement system helpers
+  const getEncouragementCategory = (exerciseKey) => {
+    const done = (workoutData[getTodayKey()] || {})[exerciseKey] || 0;
+    const goal = goals[exerciseKey];
+
+    // Milestone: exactly hit 100 reps
+    if (done === 100) return 'milestone';
+
+    // Progress: meeting or exceeding goal (>=75%)
+    if (done >= goal * 0.75) return 'progress';
+
+    // Struggle: below 75% of goal
+    return 'struggle';
+  };
+
+  const getEncouragementPhrase = (exerciseKey, category) => {
+    const phrases = ENCOURAGEMENT_PHRASES[exerciseKey]?.[category] || [];
+    if (phrases.length === 0) return null;
+    return phrases[Math.floor(Math.random() * phrases.length)];
+  };
+
+  const getTodaysFeaturedExercise = () => {
+    const exercises = Object.keys(EXERCISES);
+    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    return exercises[dayOfYear % exercises.length];
+  };
+
   // Check achievements
   const checkAchievements = () => {
     const stats = getStats();
@@ -869,6 +978,18 @@ export default function StrengthForLife() {
   const logReps = (ex, reps) => {
     const today = getTodayKey();
     setWorkoutData(p => ({ ...p, [today]: { ...p[today], [ex]: (p[today]?.[ex] || 0) + reps } }));
+
+    // Show encouragement after logging
+    const newTotal = ((workoutData[today] || {})[ex] || 0) + reps;
+    const category = newTotal === 100 ? 'milestone' :
+                     newTotal >= goals[ex] * 0.75 ? 'progress' : 'struggle';
+    const phrase = getEncouragementPhrase(ex, category);
+
+    if (phrase) {
+      setEncouragementToast({ exercise: ex, phrase, category });
+      setTimeout(() => setEncouragementToast(null), 6000); // Show for 6 seconds
+    }
+
     if (!user) {
       const n = guestRepsLogged + reps;
       setGuestRepsLogged(n);
@@ -1267,6 +1388,41 @@ Guidelines:
         </div>
       )}
 
+      {/* Encouragement Toast */}
+      {encouragementToast && (
+        <div className="fixed bottom-24 left-0 right-0 px-5 z-50 animate-slideUp">
+          <div className="card-gradient rounded-2xl p-5 max-w-md mx-auto shadow-2xl border border-white/10">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="text-2xl">{LEARNING_CONTENT[encouragementToast.exercise].icon}</div>
+              <div>
+                <h4 className="font-medium" style={{ color: EXERCISES[encouragementToast.exercise].color }}>
+                  {EXERCISES[encouragementToast.exercise].name}
+                </h4>
+                <span className="text-xs px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: `${EXERCISES[encouragementToast.exercise].color}20`,
+                        color: EXERCISES[encouragementToast.exercise].color
+                      }}>
+                  {encouragementToast.category}
+                </span>
+              </div>
+              <button
+                onClick={() => setEncouragementToast(null)}
+                className="ml-auto text-white/40 hover:text-white"
+              >
+                ×
+              </button>
+            </div>
+            <p className="text-sm text-white/90 leading-relaxed mb-2">
+              {encouragementToast.phrase.text}
+            </p>
+            <p className="text-xs text-white/40">
+              benefit: {encouragementToast.phrase.benefit}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Auth Modal */}
       {showAuthPrompt && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -1625,10 +1781,36 @@ Guidelines:
 
       {/* Main Content */}
       <main className="px-5 pb-28 space-y-4">
-        
+
         {/* ==================== TODAY VIEW ==================== */}
         {currentView === 'today' && (
           <div className="space-y-4 animate-slideUp">
+
+            {/* Motivational Banner */}
+            <div className="px-0 py-3">
+              <div className="card-gradient rounded-xl p-4">
+                {(() => {
+                  const featuredEx = getTodaysFeaturedExercise();
+                  const category = getEncouragementCategory(featuredEx);
+                  const phrase = getEncouragementPhrase(featuredEx, category);
+
+                  if (!phrase) return null;
+
+                  return (
+                    <>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="text-lg">{LEARNING_CONTENT[featuredEx].icon}</div>
+                        <span className="text-sm font-medium" style={{ color: EXERCISES[featuredEx].color }}>
+                          {EXERCISES[featuredEx].name}
+                        </span>
+                      </div>
+                      <p className="text-sm text-white/80 leading-relaxed">{phrase.text}</p>
+                      <p className="text-xs text-white/40 mt-2">benefit: {phrase.benefit}</p>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
 
             {/* Exercise Icons Bar */}
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
@@ -2421,6 +2603,27 @@ Guidelines:
                   <h3 className="font-medium">{LEARNING_CONTENT[learningExercise].title}</h3>
                   <p className="text-xs text-white/50">{LEARNING_CONTENT[learningExercise].subtitle}</p>
                 </div>
+              </div>
+            </div>
+
+            {/* Why This Matters - Encouragement Section */}
+            <div className="card-dark rounded-2xl p-4">
+              <h4 className="text-sm font-medium text-white/70 mb-3">Why This Matters</h4>
+              <div className="space-y-2">
+                {['progress', 'struggle', 'milestone'].map(category => {
+                  const phrase = getEncouragementPhrase(learningExercise, category);
+                  if (!phrase) return null;
+
+                  return (
+                    <div key={category} className="bg-white/5 rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-medium text-white/50 uppercase">{category}</span>
+                      </div>
+                      <p className="text-sm text-white/80 leading-relaxed">{phrase.text}</p>
+                      <p className="text-xs text-white/40 mt-1">→ {phrase.benefit}</p>
+                    </div>
+                  );
+                }).filter(Boolean).slice(0, 2)}
               </div>
             </div>
 
