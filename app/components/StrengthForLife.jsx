@@ -912,63 +912,24 @@ export default function StrengthForLife() {
       const mediaType = file.type;
       
       try {
-        const response = await fetch("https://api.anthropic.com/v1/messages", {
+        const response = await fetch("/api/parse-dexa", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 1000,
-            messages: [{
-              role: "user",
-              content: [
-                isPdf ? {
-                  type: "document",
-                  source: { type: "base64", media_type: mediaType, data: base64Data }
-                } : {
-                  type: "image",
-                  source: { type: "base64", media_type: mediaType, data: base64Data }
-                },
-                {
-                  type: "text",
-                  text: `Extract DEXA scan body composition data from this ${isPdf ? 'document' : 'image/screenshot'}. I need:
-1. Appendicular lean mass (arms + legs) - look for "ALM", "Appendicular", "Lean Mass" by region, or sum of left/right arm and leg lean tissue
-2. Height if available
-3. Age if available  
-4. Sex/Gender if available
-5. Total body fat percentage if available
-
-Return ONLY a valid JSON object with these exact fields (use null for any value not found):
-{
-  "armLeanMassKg": <number - total arm lean mass in kg, sum both arms>,
-  "legLeanMassKg": <number - total leg lean mass in kg, sum both legs>,
-  "heightCm": <number or null>,
-  "age": <number or null>,
-  "gender": <"male" or "female" or null>,
-  "totalBodyFatPercent": <number or null>
-}
-
-Important: 
-- Convert any values in grams to kg (divide by 1000)
-- Convert any values in lbs to kg (divide by 2.205)
-- Sum left and right limbs for total arm/leg values
-- Return ONLY the JSON, no explanation or markdown.`
-                }
-              ]
-            }]
+            base64Data,
+            mediaType,
+            isPdf
           })
         });
-        
+
         if (!response.ok) {
-          throw new Error(`API error: ${response.status}`);
+          const errorData = await response.json();
+          throw new Error(errorData.error || `API error: ${response.status}`);
         }
         
-        const data = await response.json();
-        const text = data.content?.[0]?.text || '';
-        
-        // Extract JSON from response
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
+        const parsed = await response.json();
+
+        if (parsed && !parsed.error) {
           
           // Update form with extracted values
           setDexaForm(prev => ({
@@ -1110,22 +1071,23 @@ Guidelines:
 - If asked about form, be very specific about proper technique`;
 
     try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("/api/learning-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: systemPrompt,
+          systemPrompt,
           messages: learningMessages
             .filter(m => m.role !== 'system')
             .concat({ role: 'user', content: userMessage })
             .map(m => ({ role: m.role, content: m.content }))
         })
       });
-      
-      if (!response.ok) throw new Error('API error');
-      
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'API error');
+      }
+
       const data = await response.json();
       const assistantMessage = data.content?.[0]?.text || "I'm sorry, I couldn't generate a response. Please try again.";
       
