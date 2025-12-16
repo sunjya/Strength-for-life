@@ -1575,6 +1575,7 @@ Guidelines:
       <div className="px-5 py-4 cosmic-bg stars">
         <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
           {[
+            { label: 'Strength', value: `${stats.goalPct}%`, color: '#14b8a6' },
             { label: 'Streak', value: stats.streak, color: '#f97316' },
             { label: 'Today', value: stats.dailyTotal, color: '#a855f7' },
             { label: 'Goals', value: `${stats.goalsMetToday}/5`, color: '#22c55e' }
