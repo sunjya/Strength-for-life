@@ -222,7 +222,7 @@ The "Chair Test" (sitting and standing from a chair without using hands) is used
   lunges: {
     title: 'Lunges',
     subtitle: 'Balance, Stability & Single-Leg Strength',
-    icon: '🚶',
+    icon: '⚡',
     overview: `**Lunges develop the unilateral strength and balance critical for preventing falls and maintaining mobility.**
 
 Unlike bilateral exercises, lunges work each leg independently, addressing strength imbalances and developing the stabilizer muscles essential for real-world movement.
