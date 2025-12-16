@@ -2452,26 +2452,26 @@ Guidelines:
                   <div ref={learningChatRef} />
                 </div>
 
-                {/* Suggested Prompts */}
-                {learningMessages.length <= 1 && (
-                  <div className="px-4 pb-2">
-                    <p className="text-xs text-white/40 mb-2">Ask me about {LEARNING_CONTENT[learningExercise].title.toLowerCase()}:</p>
-                    <div className="flex flex-wrap gap-2">
+                {/* Input */}
+                <div className="border-t border-white/5">
+                  {/* Suggested Prompts - Always visible */}
+                  <div className="px-4 pt-3 pb-2">
+                    <p className="text-sm text-white/50 mb-2.5">Ask about {LEARNING_CONTENT[learningExercise].title.toLowerCase()}:</p>
+                    <div className="flex overflow-x-auto scrollbar-hide gap-2 pb-2">
                       {LEARNING_CONTENT[learningExercise].prompts.map((prompt, i) => (
                         <button
                           key={i}
                           onClick={() => handleLearningChat(prompt)}
-                          className="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-xs text-white/70 hover:text-white transition"
+                          className="flex-shrink-0 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full text-sm text-white/70 hover:text-white transition"
                         >
                           {prompt}
                         </button>
                       ))}
                     </div>
                   </div>
-                )}
 
-                {/* Input */}
-                <div className="p-3 border-t border-white/5">
+                  {/* Chat Input */}
+                  <div className="p-3">
                   <div className="flex gap-2">
                     <input 
                       type="text" 
@@ -2489,6 +2489,7 @@ Guidelines:
                     >
                       <div className="w-5 h-5 text-white"><Icons.send /></div>
                     </button>
+                  </div>
                   </div>
                 </div>
               </div>
