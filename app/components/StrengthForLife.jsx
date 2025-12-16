@@ -55,6 +55,27 @@ const Icons = {
       <path d="M6 5v14M18 5v14M3 8h6v8H3zM15 8h6v8h-6zM6 12h12" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
+  logo: () => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <circle cx="16" cy="16" r="14" fill="url(#logoGradient)" opacity="0.2"/>
+      <path d="M16 6v20M10 16h12" stroke="url(#logoGradient2)" strokeWidth="2.5" strokeLinecap="round"/>
+      <circle cx="16" cy="10" r="2.5" fill="currentColor" className="text-teal-400"/>
+      <circle cx="16" cy="22" r="2.5" fill="currentColor" className="text-teal-400"/>
+      <circle cx="10" cy="16" r="2.5" fill="currentColor" className="text-teal-400"/>
+      <circle cx="22" cy="16" r="2.5" fill="currentColor" className="text-teal-400"/>
+      <defs>
+        <linearGradient id="logoGradient" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#14b8a6"/>
+          <stop offset="100%" stopColor="#06b6d4"/>
+        </linearGradient>
+        <linearGradient id="logoGradient2" x1="6" y1="16" x2="26" y2="16" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#14b8a6"/>
+          <stop offset="50%" stopColor="#06b6d4"/>
+          <stop offset="100%" stopColor="#14b8a6"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  ),
   body: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full">
       <circle cx="12" cy="5" r="2"/>
@@ -1551,10 +1572,19 @@ Guidelines:
           <button onClick={() => setCurrentView('settings')} className="w-8 h-8 text-white/50 hover:text-white transition">
             <Icons.settings />
           </button>
-          <h1 className="text-lg font-semibold tracking-wide">STRENGTH</h1>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8">
+              <Icons.logo />
+            </div>
+            <h1 className="text-lg font-semibold tracking-wide">
+              <span className="text-teal-400">Strength</span>
+              <span className="text-white/70">for</span>
+              <span className="text-cyan-400">Life</span>
+            </h1>
+          </div>
           {user ? (
-            <button onClick={() => { 
-              setUser(null); 
+            <button onClick={() => {
+              setUser(null);
               localStorage.removeItem('sfl_current_user');
               setAuthForm({ email: '', password: '', name: '' });
               setAuthError('');
