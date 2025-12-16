@@ -620,8 +620,8 @@ export default function StrengthForLife() {
   // DEXA state with unit preferences
   const [dexaScans, setDexaScans] = useState([]);
   const [showDexaForm, setShowDexaForm] = useState(false);
-  const [heightUnit, setHeightUnit] = useState('cm'); // 'cm' or 'ft'
-  const [massUnit, setMassUnit] = useState('kg'); // 'kg' or 'lb'
+  const [heightUnit, setHeightUnit] = useState('ft'); // 'cm' or 'ft'
+  const [massUnit, setMassUnit] = useState('lb'); // 'kg' or 'lb'
   const [dexaForm, setDexaForm] = useState({
     date: getTodayKey(),
     heightCm: '',
