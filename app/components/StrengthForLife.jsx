@@ -682,7 +682,7 @@ export default function StrengthForLife() {
   const [guestRepsLogged, setGuestRepsLogged] = useState(0);
   
   // App state
-  const [currentView, setCurrentView] = useState('today');
+  const [currentView, setCurrentView] = useState('start');
   const [workoutData, setWorkoutData] = useState({});
   const [goals, setGoals] = useState({ pushups: 100, squats: 100, lunges: 100, dips: 100, crunches: 100 });
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);
@@ -1820,7 +1820,7 @@ Guidelines:
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold text-white">Your 5 Essential Exercises</h2>
                 <p className="text-white/80 leading-relaxed">
-                  This platform helps you master and track the 5 key bodyweight exercises that build comprehensive functional strength. No gym required—just your body and consistency.
+                  This platform helps you master and track the 5 key bodyweight exercises that build comprehensive functional strength. No gym required—just your body and consistency. Your goal is to do as many reps of each of the five core bodyweight exercises per day as you can, and gradually work up to 100 reps of each. Slowly build up over time so you don't injure yourself or have repetitive stress injuries. If you experience any pain, ask the coach for advice on how to make sure you're using proper form and also how to do regressions of the exercises that are less difficult and strenuous. You got this!
                 </p>
               </div>
 
