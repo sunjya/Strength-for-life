@@ -1936,42 +1936,10 @@ Guidelines:
               })}
             </div>
 
-            {/* Strength Score Card - Expandable */}
+            {/* Exercise Logging Card - Always Visible */}
             <div className="card-gradient rounded-2xl overflow-hidden glow-teal">
-              <button 
-                onClick={() => {
-                  const newExpanded = expandedCard === 'strength' ? null : 'strength';
-                  setExpandedCard(newExpanded);
-                  if (!newExpanded) setSelectedExercise(null);
-                }} 
-                className="w-full p-5 text-left"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-teal-500/20 flex items-center justify-center">
-                      <div className="w-5 h-5 text-teal-400"><Icons.muscle /></div>
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Strength Score</h3>
-                      <StatusBadge status={getStrengthStatus()} />
-                    </div>
-                  </div>
-                  <div className={`w-5 h-5 text-white/30 transition-transform duration-200 ${expandedCard === 'strength' ? 'rotate-90' : ''}`}>
-                    <Icons.chevron />
-                  </div>
-                </div>
-                <div className="flex items-end gap-2 mt-4">
-                  <span className="number-xl">{stats.goalPct}</span>
-                  <span className="text-white/50 text-lg mb-2">%</span>
-                  {stats.goalPct >= 100 && <div className="w-5 h-5 text-amber-400 mb-2"><Icons.crown /></div>}
-                </div>
-                <RangeSlider value={stats.goalPct} min={0} max={100} color="#14b8a6" />
-              </button>
-              
-              {/* Expanded content */}
-              {expandedCard === 'strength' && (
-                <div className="px-5 pb-5 space-y-3 animate-slideUp border-t border-white/5 pt-4">
-                  <h4 className="text-sm text-white/70 font-medium">Exercise Breakdown</h4>
+              <div className="p-5 space-y-3">
+                <p className="text-sm text-white/60 text-center mb-4">Click on each exercise to log your workout.</p>
                   {Object.entries(EXERCISES).map(([key, ex]) => {
                     const done = todayData[key] || 0;
                     const pct = Math.min(100, (done / goals[key]) * 100);
@@ -2023,14 +1991,13 @@ Guidelines:
                       </div>
                     );
                   })}
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); setCurrentView('log'); setSelectedExercise(null); }} 
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setCurrentView('log'); setSelectedExercise(null); }}
                     className="w-full mt-3 py-3 bg-teal-500/20 text-teal-400 rounded-xl font-medium hover:bg-teal-500/30 transition"
                   >
                     Custom Reps
                   </button>
-                </div>
-              )}
+              </div>
             </div>
 
             {/* Activity Goal Card - Expandable */}
